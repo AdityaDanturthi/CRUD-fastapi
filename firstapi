@@ -20,5 +20,6 @@ def get_student(studentid: int = Path(None, description="Please input the id of 
 @app.get('/get-student-by-name')
 def get_student(name: str):
     for studentid in students:
-        if students[studentid]['name'] == name:
-            return students[studentid]['name']
+        if students[studentid]["name"] == name:
+            return students[studentid]
+    return {"Data not found!"}
