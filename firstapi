@@ -13,6 +13,9 @@ students = {
     }
 }
 
+class Student(BaseModel):
+    name: str
+
 @app.get("/get-student/{studentid}")
 def get_student(studentid: int = Path(None, description="Please input the id of the student you would like to view")):
     return students[studentid]
@@ -23,3 +26,11 @@ def get_student(name: str):
         if students[studentid]["name"] == name:
             return students[studentid]
     return {"Data not found!"}
+
+@app.post("/create-student/{studentid}")
+def create_student(studentid: int, student: Student):
+    if studentid in students:
+        return {"Error": "Student id already exists!"}
+
+    students[studentid] = student
+    return students[studentid]
