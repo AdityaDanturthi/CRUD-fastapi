@@ -47,3 +47,11 @@ def update_student(studentid: int, student: UpdateStudent):
 
     students[studentid] = student
     return students[studentid]
+
+@app.delete("/delete-student/{studentid}")
+def delete_student(studentid: int):
+    if studentid not in students:
+        return {"Error": "Data not found!"}
+
+    del students[studentid]
+    return {"Message": "Record deleted successfully!"}
