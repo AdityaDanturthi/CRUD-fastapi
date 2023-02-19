@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Path
+from pydantic import BaseModel
+from typing import Optional
 
 app = FastAPI()
 
@@ -16,6 +18,9 @@ students = {
 class Student(BaseModel):
     name: str
 
+class UpdateStudent(BaseModel):
+    name: Optional[str] = None
+
 @app.get("/get-student/{studentid}")
 def get_student(studentid: int = Path(None, description="Please input the id of the student you would like to view")):
     return students[studentid]
@@ -31,6 +36,14 @@ def get_student(name: str):
 def create_student(studentid: int, student: Student):
     if studentid in students:
         return {"Error": "Student id already exists!"}
+
+    students[studentid] = student
+    return students[studentid]
+
+@app.put("/update-student/{studentid}")
+def update_student(studentid: int, student: UpdateStudent):
+    if studentid not in students:
+        return {"Error": "Data not found!"}
 
     students[studentid] = student
     return students[studentid]
