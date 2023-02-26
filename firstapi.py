@@ -1,0 +1,65 @@
+from fastapi import FastAPI, Path
+from pydantic import BaseModel
+from typing import Optional
+
+app = FastAPI()
+
+students = {
+    
+    1: {
+     "name": 'FirstStudent'   
+    },
+
+    2: {
+    "name": 'SecondStudent'
+    }
+}
+
+class Student(BaseModel):
+    name: str
+
+class UpdateStudent(BaseModel):
+    name: Optional[str] = None
+
+@app.get("/students")
+def get_student():
+    return students
+
+@app.get("/get-student/{studentid}")
+def get_student(studentid: int = Path(None, description="Please input the id of the student you would like to view")):
+    return students[studentid]
+
+@app.get('/get-student-by-name/{name}')
+def get_student(name: str):
+    for studentid in students:
+        if students[studentid]["name"] == name:
+            return students[studentid]
+    return {"Data not found!"}
+
+@app.post("/create-student/{studentid}")
+def create_student(studentid: int, student: Student):
+    if studentid in students:
+        return {"Error": "Student id already exists!"}
+
+    students[studentid] = student
+    return students[studentid]
+
+@app.put("/update-student/{studentid}")
+def update_student(studentid: int, student: UpdateStudent):
+    if studentid not in students:
+        return {"Error": "Data not found!"}
+
+    if student.name != None:
+        students[studentid] = student.name
+    return students[studentid]
+
+@app.delete("/delete-student/{studentid}")
+def delete_student(studentid: int):
+    if studentid not in students:
+        return {"Error": "Data not found!"}
+
+    del students[studentid]
+    return {"Message": "Record deleted successfully!"}
+
+
+
